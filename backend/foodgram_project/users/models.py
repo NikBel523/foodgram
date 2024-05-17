@@ -9,6 +9,9 @@ ROLE_ADMIN = 'admin'
 class FoodgramUser(AbstractUser):
     """Модель для замены стандартной пользовательской модели."""
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
     role = models.CharField(max_length=MAX_LENGTH_150,
                             default=ROLE_USER,
                             choices=(
@@ -21,6 +24,8 @@ class FoodgramUser(AbstractUser):
         null=True,
         default=None
     )
+
+    email = models.EmailField(unique=True)
 
     @property
     def is_admin(self):
