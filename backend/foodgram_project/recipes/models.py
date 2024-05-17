@@ -46,8 +46,7 @@ class IngredientModel(models.Model):
 class RecipeModel(models.Model):
     """Модель отвечающая за полный рецепт."""
 
-    # TODO пересмотреть on_delete
-    tags = models.ForeignKey(TagModel, on_delete=models.CASCADE)
+    tags = models.ManyToManyField(TagModel)
 
     author = models.ForeignKey(
         User,

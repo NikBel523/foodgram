@@ -29,7 +29,6 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'author',
-        'tags',
         'cooking_time',
         'created_at',
     )
