@@ -12,12 +12,14 @@ class FoodgramUser(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
-    role = models.CharField(max_length=MAX_LENGTH_150,
-                            default=ROLE_USER,
-                            choices=(
-                                (ROLE_USER, 'user'),
-                                (ROLE_ADMIN, 'admin'),
-                            ))
+    role = models.CharField(
+        max_length=MAX_LENGTH_150,
+        default=ROLE_USER,
+        choices=(
+            (ROLE_USER, 'user'),
+            (ROLE_ADMIN, 'admin'),
+        )
+    )
 
     avatar = models.ImageField(
         upload_to='images/avatars/',
