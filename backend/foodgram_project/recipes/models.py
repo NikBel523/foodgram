@@ -33,7 +33,7 @@ class IngredientModel(models.Model):
         verbose_name='Название ингридиента',
     )
 
-    units = models.CharField(max_length=16)  # choices=UNITS ?
+    measurement_unit = models.CharField(max_length=16)  # choices=UNITS ?
 
     def __str__(self):
         return self.name
@@ -60,8 +60,6 @@ class RecipeModel(models.Model):
         through='RecipeIngredientsModel',
         blank=False,
     )
-
-    # TODO is_favorited & is_in_shopping_cart ?
 
     name = models.CharField(
         max_length=NAME_MAX_LENGTH,
