@@ -10,7 +10,7 @@ class FoodgramUser(AbstractUser):
     """Модель для замены стандартной пользовательской модели."""
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     role = models.CharField(
         max_length=MAX_LENGTH_150,
@@ -27,6 +27,7 @@ class FoodgramUser(AbstractUser):
         default=None
     )
 
+    username = models.CharField(max_length=MAX_LENGTH_150, unique=True)
     email = models.EmailField(unique=True)
 
     @property
