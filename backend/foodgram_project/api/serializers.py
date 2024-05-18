@@ -11,7 +11,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 'email', 'username', 'is_subscribed',
+            'email', 'id', 'username', 'first_name',
+            'last_name', 'is_subscribed', 'avatar',
         )
 
     def get_is_subscribed(self, obj):
