@@ -26,21 +26,22 @@ class TagModel(models.Model):
 
 
 class IngredientModel(models.Model):
-    """Общая модель ингридиентов."""
+    """Общая модель ингредиентов."""
 
     name = models.CharField(
         max_length=NAME_MAX_LENGTH,
-        verbose_name='Название ингридиента',
+        verbose_name='Название ингредиента',
     )
 
-    measurement_unit = models.CharField(max_length=16)  # choices=UNITS ?
+    measurement_unit = models.CharField(max_length=16)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = 'Ингридиент'
-        verbose_name_plural = 'Ингридиенты'
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+        default_related_name = 'ingredient'
 
 
 class RecipeModel(models.Model):
@@ -92,19 +93,16 @@ class RecipeModel(models.Model):
 
 
 class RecipeIngredientsModel(models.Model):
-    """Ингридиенты в составе рецептов."""
+    """Ингредиенты в составе рецептов."""
 
     recipe_name = models.ForeignKey(RecipeModel, on_delete=models.CASCADE)
-    # TODO пересмотреть on_delete
     name = models.ForeignKey(IngredientModel, on_delete=models.CASCADE)
-
-    measurement_unit = models.CharField(max_length=16)  # choices=UNITS ?
-
     amount = models.SmallIntegerField(verbose_name='Количество')
 
     def __str__(self):
         return f'{self.name} для рецпета {self.recipe_name}'
 
     class Meta:
-        verbose_name = 'Ингридиент в рецепте'
-        verbose_name_plural = 'Ингридиенты в рецепте'
+        verbose_name = 'Ингредиент в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецепте'
+        default_related_name = 'recipeingredients'

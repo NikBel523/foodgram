@@ -38,7 +38,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    """Администратор для отдельных ингридиентов."""
+    """Администратор для отдельных ингредиентов."""
 
     list_display = (
         'name',
@@ -49,13 +49,13 @@ class IngredientAdmin(admin.ModelAdmin):
 
 
 class RecipeIngredientsAdmin(admin.ModelAdmin):
-    """Администратор для ингридиентов в составе рецептов."""
+    """Администратор для ингредиентов в составе рецептов."""
 
     list_display = (
         'recipe_name',
         'name',
         'amount',
-        'measurement_unit',
+        # 'measurement_unit',
     )
 
     list_filter = ('recipe_name', 'name')
