@@ -1,8 +1,9 @@
 from rest_framework import serializers
 
-from recipes.models import RecipeIngredientsModel, RecipeModel, TagModel, IngredientModel
 from .base64_field import Base64ImageField
 from .users_ser import UserSerializer
+from recipes.models import (IngredientModel, RecipeIngredientsModel,
+                            RecipeModel, TagModel)
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -86,9 +87,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     def _create_or_update_ingredients(self, recipe, ingredients_data):
         for ingredient_data in ingredients_data:
+            ingredient = ingredient_data.pop('name')['id']
             RecipeIngredientsModel.objects.create(
                 recipe_name=recipe,
-                name=ingredient_data.pop('id'),
+                name=ingredient,
                 **ingredient_data,
             )
 
