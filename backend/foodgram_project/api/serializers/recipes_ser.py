@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from recipes.models import RecipeIngredientsModel, RecipeModel, TagModel
+from .base64_field import Base64ImageField
 from .users_ser import UserSerializer
 
 
@@ -31,6 +32,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)
     ingredients = serializers.SerializerMethodField()
+    image = Base64ImageField()
 
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
