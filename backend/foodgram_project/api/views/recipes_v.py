@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 
-from api.serializers import RecipeSerializer, RecipeWriteSerializer, TagSerializer
+from api.serializers import RecipeReadSerializer, RecipeWriteSerializer, TagSerializer
 from recipes.models import RecipeModel, TagModel
 
 
@@ -13,12 +13,12 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
 
     queryset = RecipeModel.objects.all()
-    serializer_class = RecipeSerializer
+    serializer_class = RecipeReadSerializer
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
             return RecipeWriteSerializer
-        return RecipeSerializer
+        return RecipeReadSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

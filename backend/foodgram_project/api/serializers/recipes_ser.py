@@ -30,7 +30,7 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
-class RecipeSerializer(serializers.ModelSerializer):
+class RecipeReadSerializer(serializers.ModelSerializer):
     """Сериализатор для данных к рецептам."""
 
     tags = TagSerializer(many=True, read_only=True)
@@ -83,8 +83,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         )
 
     def to_representation(self, instance):
-
-        return RecipeSerializer(instance).data
+        return RecipeReadSerializer(instance).data
 
     def _create_or_update_ingredients(self, recipe, ingredients_data):
         for ingredient_data in ingredients_data:
