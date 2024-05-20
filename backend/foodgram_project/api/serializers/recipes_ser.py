@@ -87,10 +87,9 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     def _create_or_update_ingredients(self, recipe, ingredients_data):
         for ingredient_data in ingredients_data:
-            ingredient = ingredient_data.pop('name')['id']
             RecipeIngredientsModel.objects.create(
                 recipe_name=recipe,
-                name=ingredient,
+                name=ingredient_data.pop('name')['id'],
                 **ingredient_data,
             )
 
