@@ -59,6 +59,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
+    """Сериализавтор для записи и апдейта рецептов."""
 
     tags = serializers.PrimaryKeyRelatedField(
         queryset=TagModel.objects.all(),
@@ -102,3 +103,24 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
         self._create_or_update_ingredients(recipe, ingredients_data)
         return recipe
+
+    def update(self, instance, validated_data):
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+
+        instance.image = validated_data.get('image', instance.image)
+        instance.name = validated_data.get('name', instance.name)
+        instance.text = validated_data.get('text', instance.text)
+        instance.cooking_time = validated_data.get(
+            'cooking_time',
+            instance.cooking_time,
+        )
+        instance.save()
+
+        instance.ingredients.clear()
+        self._create_or_update_ingredients(instance, ingredients)
+
+        instance.tags.clear()
+        instance.tags.set(tags)
+
+        return instance
