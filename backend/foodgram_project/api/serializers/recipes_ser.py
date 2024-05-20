@@ -17,7 +17,7 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
     """Сериализатор для данных из модели RecipeIngredientsModel."""
 
     id = serializers.PrimaryKeyRelatedField(
-        queryset=IngredientModel.objects.all()
+        queryset=IngredientModel.objects.all(), source='name.id'
     )
     name = serializers.ReadOnlyField(source='name.name')
     measurement_unit = serializers.ReadOnlyField(
