@@ -120,3 +120,4 @@ class FavoriteModel(models.Model):
     class Meta:
         verbose_name = 'Рецепт в избранном'
         verbose_name_plural = 'Рецепты в избранном'
+        unique_together = ('user', 'recipe')
