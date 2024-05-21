@@ -89,6 +89,7 @@ class RecipeModel(models.Model):
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+        default_related_name = 'recipes'
         ordering = ('created_at',)
 
 
