@@ -49,7 +49,10 @@ class SubscribeView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = SubscriptionUserSerializer(subscription.subscription)
+        serializer = SubscriptionUserSerializer(
+            subscription.subscription,
+            context={'request': request},
+        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, id):
