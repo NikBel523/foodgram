@@ -49,7 +49,13 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         )
 
     def get_is_favorited(self, obj):
-        return False
+        request = self.context.get('request', None)
+        if request is None or request.user.is_anonymous:
+            return False
+        return FavoriteModel.objects.filter(
+            user=request.user,
+            recipe=obj,
+        ).exists()
 
     def get_is_in_shopping_cart(self, obj):
         return False
