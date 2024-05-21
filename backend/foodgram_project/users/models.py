@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Q, F
 
 MAX_LENGTH_150 = 150
 ROLE_USER = 'user'
@@ -47,3 +48,32 @@ class FoodgramUser(AbstractUser):
         ordering = ('username',)
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+
+class SubscriptionModel(models.Model):
+    """Модель хранения информации о подписках пользователей."""
+
+    user = models.ForeignKey(
+        FoodgramUser, on_delete=models.CASCADE, related_name='follower'
+    )
+
+    subscription = models.ForeignKey(
+        FoodgramUser, on_delete=models.CASCADE, related_name='subscription'
+    )
+
+    def __str__(self) -> str:
+        return f'{self.user} на {self.subscription}'
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'subscription'],
+                name='unique_subscription',
+            ),
+            models.CheckConstraint(
+                check=~Q(subscription__exact=F('user')),
+                name='cant_follow_yourself',
+            ),
+        ]

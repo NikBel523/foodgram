@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import FoodgramUser
+from .models import FoodgramUser, SubscriptionModel
 
 
 class FoodgramUserAdmin(admin.ModelAdmin):
@@ -19,4 +19,16 @@ class FoodgramUserAdmin(admin.ModelAdmin):
     )
 
 
+class SubscriptionAdmin(admin.ModelAdmin):
+    """Администратор для подписок."""
+
+    list_display = (
+        'user',
+        'subscription',
+    )
+
+    search_fields = ('user',)
+
+
 admin.site.register(FoodgramUser, UserAdmin)
+admin.site.register(SubscriptionModel, SubscriptionAdmin)
