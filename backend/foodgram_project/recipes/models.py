@@ -106,3 +106,17 @@ class RecipeIngredientsModel(models.Model):
         verbose_name = 'Ингредиент в рецепте'
         verbose_name_plural = 'Ингредиенты в рецепте'
         default_related_name = 'recipeingredients'
+
+
+class FavoriteModel(models.Model):
+    """Отслеживает связи рецепт-пользователь, формирует избранное."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(RecipeModel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.recipe} добавлен {self.user}'
+
+    class Meta:
+        verbose_name = 'Рецепт в избранном'
+        verbose_name_plural = 'Рецепты в избранном'
