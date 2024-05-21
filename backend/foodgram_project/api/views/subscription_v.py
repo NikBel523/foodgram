@@ -16,8 +16,7 @@ class SubscriptionListView(generics.ListAPIView):
     serializer_class = SubscriptionUserSerializer
 
     def get_queryset(self):
-        user = self.request
-        return user.subscription.all()
+        return User.objects.filter(subscription__user=self.request.user)
 
 
 class SubscribeView(APIView):
