@@ -2,7 +2,8 @@ from rest_framework import serializers
 
 from .base64_field import Base64ImageField
 from .users_ser import UserSerializer
-from recipes.models import (IngredientModel, RecipeIngredientsModel,
+from recipes.models import (IngredientModel, FavoriteModel,
+                            RecipeIngredientsModel,
                             RecipeModel, TagModel)
 
 
@@ -122,3 +123,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         instance.tags.set(tags)
 
         return instance
+
+
+class FavoritedSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RecipeModel
+        fields = ('id', 'name', 'image', 'cooking_time')
