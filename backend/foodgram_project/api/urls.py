@@ -1,9 +1,10 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from api.views import (AddFavoriteView, AvatarChangeView, IngredientViewSet,
-                       RecipeViewSet, SubscribeView, SubscriptionListView,
-                       TagViewSet, ManageShoppingCartView)
+from api.views import (AddFavoriteView, AvatarChangeView,
+                       DownloadShoppingCartView, IngredientViewSet,
+                       ManageShoppingCartView, RecipeViewSet, SubscribeView,
+                       SubscriptionListView, TagViewSet)
 
 app_name = 'api_v1'
 
@@ -40,6 +41,11 @@ recipes_urls = [
 
 urlpatterns = [
     path('', include(router_v1.urls)),
+    path(
+        'download_shopping_cart/',
+        DownloadShoppingCartView.as_view(),
+        name='download_shopping_cart',
+    ),
     path('recipes/', include(recipes_urls)),
     path('users/', include(custom_users_urls)),
     path('', include('djoser.urls')),

@@ -1,14 +1,37 @@
-from rest_framework import status, viewsets
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.shortcuts import get_object_or_404
 
 from api.serializers import FavoritedSerializer
-from recipes.models import ShoppingCartModel, RecipeModel, TagModel
+from api.utils import generate_shopping_cart_txt
+from recipes.models import RecipeModel, ShoppingCartModel
 
 
 class DownloadShoppingCartView(APIView):
-    ...
+
+    def get(self, request):
+        cart_items = ShoppingCartModel.objects.filter(user=request.user)
+        ingredients = {}
+
+        for item in cart_items:
+            for ingredient in item.recipe.recipeingredients.all():
+                ingredient_name = ingredient.name.name
+                measurement_unit = ingredient.name.measurement_unit
+
+                if ingredient_name in ingredients:
+                    ingredients[ingredient_name]['amount'] += ingredient.amount
+                else:
+                    ingredients[ingredient_name] = {
+                        'amount': ingredient.amount,
+                        'measurement_unit': measurement_unit,
+                    }
+
+        txt_content = generate_shopping_cart_txt(ingredients)
+        response = HttpResponse(txt_content, content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename="список.txt"'
+        return response
 
 
 class ManageShoppingCartView(APIView):
