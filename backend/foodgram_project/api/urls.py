@@ -24,19 +24,23 @@ custom_users_urls = [
     path('me/avatar/', AvatarChangeView.as_view(), name='avatar-patch'),
 ]
 
-
-urlpatterns = [
-    path('', include(router_v1.urls)),
+recipes_urls = [
     path(
-        'recipes/<int:recipe_id>/favorite/',
+        '<int:recipe_id>/favorite/',
         AddFavoriteView.as_view(),
         name='add_favorite',
     ),
     path(
-        'recipes/<int:recipe_id>/shopping_cart/',
+        '<int:recipe_id>/shopping_cart/',
         ManageShoppingCartView.as_view(),
         name='add_to_shopping_cart',
     ),
+]
+
+
+urlpatterns = [
+    path('', include(router_v1.urls)),
+    path('recipes/', include(recipes_urls)),
     path('users/', include(custom_users_urls)),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
