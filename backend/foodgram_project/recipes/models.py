@@ -122,3 +122,17 @@ class FavoriteModel(models.Model):
         verbose_name = 'Рецепт в избранном'
         verbose_name_plural = 'Рецепты в избранном'
         unique_together = ('user', 'recipe')
+
+
+class ShoppingCartModel(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(RecipeModel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.recipe} добавлен в покупки {self.user}'
+
+    class Meta:
+        verbose_name = 'Рецепт в покупках'
+        verbose_name_plural = 'Рецепты в покупках'
+        unique_together = ('user', 'recipe')

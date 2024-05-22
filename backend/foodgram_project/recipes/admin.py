@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (IngredientModel, RecipeIngredientsModel, RecipeModel,
-                     TagModel)
+                     ShoppingCartModel, TagModel)
 
 
 class IngredientsInline(admin.TabularInline):
@@ -55,13 +55,24 @@ class RecipeIngredientsAdmin(admin.ModelAdmin):
         'recipe_name',
         'name',
         'amount',
-        # 'measurement_unit',
     )
 
     list_filter = ('recipe_name', 'name')
 
 
+class ShoppingCartModelAdmin(admin.ModelAdmin):
+    """Администратор для связей пользователей и реуептов в корзине."""
+
+    list_display = (
+        'user',
+        'recipe',
+    )
+
+    search_fields = ('user',)
+
+
 admin.site.register(TagModel, TagAdmin)
 admin.site.register(RecipeModel, RecipeAdmin)
 admin.site.register(IngredientModel, IngredientAdmin)
+admin.site.register(ShoppingCartModel, ShoppingCartModelAdmin)
 admin.site.register(RecipeIngredientsModel, RecipeIngredientsAdmin)

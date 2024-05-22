@@ -3,7 +3,7 @@ from rest_framework import routers
 
 from api.views import (AddFavoriteView, AvatarChangeView, IngredientViewSet,
                        RecipeViewSet, SubscribeView, SubscriptionListView,
-                       TagViewSet)
+                       TagViewSet, ManageShoppingCartView)
 
 app_name = 'api_v1'
 
@@ -31,6 +31,11 @@ urlpatterns = [
         'recipes/<int:recipe_id>/favorite/',
         AddFavoriteView.as_view(),
         name='add_favorite',
+    ),
+    path(
+        'recipes/<int:recipe_id>/shopping_cart/',
+        ManageShoppingCartView.as_view(),
+        name='add_to_shopping_cart',
     ),
     path('users/', include(custom_users_urls)),
     path('', include('djoser.urls')),
