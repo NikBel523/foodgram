@@ -27,6 +27,11 @@ custom_users_urls = [
 
 recipes_urls = [
     path(
+        'download_shopping_cart/',
+        DownloadShoppingCartView.as_view(),
+        name='download_shopping_cart',
+    ),
+    path(
         '<int:recipe_id>/favorite/',
         AddFavoriteView.as_view(),
         name='add_favorite',
@@ -40,13 +45,8 @@ recipes_urls = [
 
 
 urlpatterns = [
-    path('', include(router_v1.urls)),
-    path(
-        'download_shopping_cart/',
-        DownloadShoppingCartView.as_view(),
-        name='download_shopping_cart',
-    ),
     path('recipes/', include(recipes_urls)),
+    path('', include(router_v1.urls)),
     path('users/', include(custom_users_urls)),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
