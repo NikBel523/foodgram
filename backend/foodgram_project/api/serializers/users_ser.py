@@ -27,6 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
             ).exists()
         return False
 
+
 class AvatarChangeSerializer(serializers.ModelSerializer):
 
     avatar = Base64ImageField()

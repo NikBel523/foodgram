@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from rest_framework import generics, mixins
+from rest_framework import generics
 
 from api.serializers import AvatarChangeSerializer
 
