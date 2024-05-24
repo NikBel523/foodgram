@@ -1,4 +1,7 @@
+import pyshorteners
+
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -27,6 +30,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+    @action(detail=True, methods=['get'], url_path='get-link')
+    def get_link(self, request, pk=None):
+        recipe = self.get_object()
+        base_url = request.build_absolute_uri('/')[:-1]
+        recipe_url = f"{base_url}/api/recipes/{recipe.id}/"
+
+        s = pyshorteners.Shortener()
+        short_url = s.tinyurl.short(recipe_url)
+
+        return Response({'short_url': short_url}, status=status.HTTP_200_OK)
 
 
 class AddFavoriteView(APIView):
