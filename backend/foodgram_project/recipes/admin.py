@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.contrib import admin
 
 from .models import (IngredientModel, RecipeIngredientsModel, RecipeModel,
@@ -31,10 +32,21 @@ class RecipeAdmin(admin.ModelAdmin):
         'author',
         'cooking_time',
         'created_at',
+        'favorite_count',
     )
 
     list_filter = ('tags',)
     search_fields = ('name', 'author',)
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(fav_count=Count('favoritemodel'))
+        return queryset
+
+    def favorite_count(self, obj):
+        return obj.fav_count
+
+    favorite_count.short_description = 'Кол-во добавлений в избранное'
 
 
 class IngredientAdmin(admin.ModelAdmin):
