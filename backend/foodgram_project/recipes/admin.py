@@ -2,7 +2,7 @@ from django.db.models import Count
 from django.contrib import admin
 
 from .models import (IngredientModel, RecipeIngredientsModel, RecipeModel,
-                     ShoppingCartModel, TagModel)
+                     ShoppingCartModel, TagModel, FavoriteModel)
 
 
 class IngredientsInline(admin.TabularInline):
@@ -72,8 +72,8 @@ class RecipeIngredientsAdmin(admin.ModelAdmin):
     list_filter = ('recipe_name', 'name')
 
 
-class ShoppingCartModelAdmin(admin.ModelAdmin):
-    """Администратор для связей пользователей и реуептов в корзине."""
+class UserRecipeLinkAdmin(admin.ModelAdmin):
+    """Админестратор для избранного и списка покупок."""
 
     list_display = (
         'user',
@@ -86,5 +86,6 @@ class ShoppingCartModelAdmin(admin.ModelAdmin):
 admin.site.register(TagModel, TagAdmin)
 admin.site.register(RecipeModel, RecipeAdmin)
 admin.site.register(IngredientModel, IngredientAdmin)
-admin.site.register(ShoppingCartModel, ShoppingCartModelAdmin)
+admin.site.register(FavoriteModel, UserRecipeLinkAdmin)
+admin.site.register(ShoppingCartModel, UserRecipeLinkAdmin)
 admin.site.register(RecipeIngredientsModel, RecipeIngredientsAdmin)
