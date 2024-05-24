@@ -40,7 +40,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         s = pyshorteners.Shortener()
         short_url = s.tinyurl.short(recipe_url)
 
-        return Response({'short_url': short_url}, status=status.HTTP_200_OK)
+        return Response({'short-link': short_url}, status=status.HTTP_200_OK)
 
 
 class AddFavoriteView(APIView):
