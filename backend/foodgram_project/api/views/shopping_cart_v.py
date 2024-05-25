@@ -57,12 +57,16 @@ class ManageShoppingCartView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, recipe_id):
-
-        cart_item = ShoppingCartModel.objects.filter(recipe=recipe_id)
-        if cart_item:
-            cart_item.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(
-            {'errors': 'Рецепта не было в корзине.'},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        recipe = get_object_or_404(RecipeModel, id=recipe_id)
+        try:
+            cart_item = ShoppingCartModel.objects.get(
+                recipe=recipe.id,
+                user=request.user,
+            )
+        except ShoppingCartModel.DoesNotExist:
+            return Response(
+                {'errors': 'Рецепта не было в вашей корзине.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        cart_item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
