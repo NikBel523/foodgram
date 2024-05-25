@@ -96,10 +96,15 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return value
 
     def validate_ingredients(self, value):
-        if len(value) != len(set(value)):
-            raise ValidationError({'ingredients': 'Нужны разные ингредиенты.'})
-        for ingredient in value:
-            if ingredient['amount'] < 1:
+        ingredient_names = set()
+        for ingredient_dict in value:
+            ingredient_name = ingredient_dict.get('name', {}).get('id')
+            if ingredient_name in ingredient_names:
+                raise ValidationError(
+                    {'ingredients': 'Нужны разные ингредиенты.'},
+                )
+            ingredient_names.add(ingredient_name)
+            if ingredient_dict.get('amount', 0) < 1:
                 raise ValidationError({'ingredients': 'Кол-во не меньше 1.'})
         return value
 
@@ -126,6 +131,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
 
         self._create_or_update_ingredients(recipe, ingredients_data)
+
+        recipe.is_favorited = False
+        recipe.is_in_shopping_cart = False
+
         return recipe
 
     def update(self, instance, validated_data):
