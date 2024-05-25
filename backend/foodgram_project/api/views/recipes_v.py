@@ -7,6 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api.permissions import IsAuthorOrAdminOrReadOnly
 from api.filters import RecipeFilter
 from api.paginator import LimitPageNumberPagination
 from api.serializers import (FavoritedSerializer, RecipeReadSerializer,
@@ -29,6 +30,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
 
     def get_queryset(self):
         user = self.request.user
