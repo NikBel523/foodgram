@@ -16,7 +16,12 @@ class SubscriptionUserSerializer(UserSerializer):
         fields = UserSerializer.Meta.fields + ('recipes', 'recipes_count')
 
     def get_recipes(self, obj):
-        return FavoritedSerializer(obj.recipes.all(), many=True).data
+        request = self.context.get('request')
+        recipes_limit = int(request.query_params.get('recipes_limit', 0))
+        recipes_qs = obj.recipes.all()
+        if recipes_limit:
+            recipes_qs = recipes_qs[:recipes_limit]
+        return FavoritedSerializer(recipes_qs, many=True).data
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
