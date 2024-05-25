@@ -31,6 +31,9 @@ class FoodgramUser(AbstractUser):
     username = models.CharField(max_length=MAX_LENGTH_150, unique=True)
     email = models.EmailField(unique=True)
 
+    first_name = models.CharField(max_length=MAX_LENGTH_150)
+    last_name = models.CharField(max_length=MAX_LENGTH_150)
+
     @property
     def is_admin(self):
         return self.role == ROLE_ADMIN or self.is_superuser or self.is_staff
