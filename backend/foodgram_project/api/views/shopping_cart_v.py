@@ -37,7 +37,13 @@ class DownloadShoppingCartView(APIView):
 class ManageShoppingCartView(APIView):
 
     def post(self, request, recipe_id):
-        recipe = get_object_or_404(RecipeModel, id=recipe_id)
+        try:
+            recipe = RecipeModel.objects.get(id=recipe_id)
+        except RecipeModel.DoesNotExist:
+            return Response(
+                {'errors': 'Рецепт не найден'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         cart_item, created = ShoppingCartModel.objects.get_or_create(
             user=request.user,
             recipe=recipe,

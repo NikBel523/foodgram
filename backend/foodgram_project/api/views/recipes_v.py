@@ -15,6 +15,7 @@ from api.serializers import (FavoritedSerializer, RecipeReadSerializer,
 from recipes.models import (FavoriteModel, RecipeModel, ShoppingCartModel,
                             TagModel)
 
+ERROR_TEXT_400 = 'Рецепт не существует.'
 ERROR_TEXT_404 = 'Рецепт не найден.'
 
 
@@ -87,8 +88,8 @@ class AddFavoriteView(APIView):
             recipe = RecipeModel.objects.get(id=recipe_id)
         except RecipeModel.DoesNotExist:
             return Response(
-                {"errors": ERROR_TEXT_404},
-                status=status.HTTP_404_NOT_FOUND,
+                {"errors": ERROR_TEXT_400},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         favorite, created = FavoriteModel.objects.get_or_create(
