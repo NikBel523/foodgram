@@ -3,7 +3,7 @@ from recipes.models import RecipeModel, IngredientModel
 
 
 class RecipeFilter(filters.FilterSet):
-    tags = filters.CharFilter(field_name='tags__slug', lookup_expr='icontains')
+    tags = filters.CharFilter(method='filter_tags', label='Теги')
     is_favorited = filters.BooleanFilter(
         method='filter_is_favorited',
         label='В избраном',
@@ -16,6 +16,10 @@ class RecipeFilter(filters.FilterSet):
     class Meta:
         model = RecipeModel
         fields = ('author', 'tags', 'is_favorited', 'is_in_shopping_cart')
+
+    def filter_tags(self, queryset, name, value):
+        tags = value.split(',')
+        return queryset.filter(tags__slug__in=tags).distinct()
 
     def filter_is_favorited(self, queryset, name, value):
         if value:
