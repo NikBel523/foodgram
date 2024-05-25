@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from .base64_field import Base64ImageField
 from .users_ser import UserSerializer
@@ -88,6 +89,36 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'text',
             'cooking_time',
         )
+
+    def validate(self, data):
+        required_fields = [
+            'tags', 'ingredients', 'image', 'name', 'text', 'cooking_time',
+        ]
+        for field in required_fields:
+            if field not in data or not data[field]:
+                raise ValidationError(
+                    {field:
+                        f'Поле {field} обязательноедля создания рецепта.'},
+                )
+        return data
+
+    def validate_tags(self, value):
+        if len(value) != len(set(value)):
+            raise ValidationError({'tags': 'Теги не могут повторяться.'})
+        return value
+
+    def validate_ingredients(self, value):
+        if len(value) != len(set(value)):
+            raise ValidationError({'ingredients': 'Нужны разные ингредиенты.'})
+        for ingredient in value:
+            if ingredient['amount'] < 1:
+                raise ValidationError({'ingredients': 'Кол-во не меньше 1.'})
+        return value
+
+    def validate_cooking_time(self, value):
+        if value < 1:
+            raise ValidationError({'cooking_time': 'Время не меньше 1.'})
+        return value
 
     def to_representation(self, instance):
         return RecipeReadSerializer(instance).data
