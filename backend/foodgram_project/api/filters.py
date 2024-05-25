@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from recipes.models import RecipeModel
+from recipes.models import RecipeModel, IngredientModel
 
 
 class RecipeFilter(filters.FilterSet):
@@ -26,3 +26,12 @@ class RecipeFilter(filters.FilterSet):
         if value:
             return queryset.filter(is_in_shopping_cart__gt=0)
         return queryset.filter(is_in_shopping_cart=0)
+
+
+class IngredientFilter(filters.FilterSet):
+
+    name = filters.CharFilter(field_name='name', lookup_expr='istartswith')
+
+    class Meta:
+        model = IngredientModel
+        fields = ['name']
