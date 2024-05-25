@@ -4,6 +4,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.pagination import LimitOffsetPagination
 
 from api.serializers import (FavoritedSerializer, RecipeReadSerializer,
                              RecipeWriteSerializer, TagSerializer)
@@ -22,6 +23,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     queryset = RecipeModel.objects.all()
     serializer_class = RecipeReadSerializer
+    pagination_class = LimitOffsetPagination
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
