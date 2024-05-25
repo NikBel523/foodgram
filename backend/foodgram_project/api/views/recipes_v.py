@@ -1,5 +1,6 @@
 import pyshorteners
 
+from django.db.models import Exists, OuterRef, Value, BooleanField
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -10,7 +11,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from api.filters import RecipeFilter
 from api.serializers import (FavoritedSerializer, RecipeReadSerializer,
                              RecipeWriteSerializer, TagSerializer)
-from recipes.models import FavoriteModel, RecipeModel, TagModel
+from recipes.models import FavoriteModel, RecipeModel, TagModel, ShoppingCartModel
 
 ERROR_TEXT_404 = 'Рецепт не найден.'
 
@@ -23,11 +24,37 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
 
-    queryset = RecipeModel.objects.all()
     serializer_class = RecipeReadSerializer
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = RecipeModel.objects.all()
+
+        if user.is_authenticated:
+            queryset = queryset.annotate(
+                is_favorited=Exists(
+                    FavoriteModel.objects.filter(
+                        recipe=OuterRef('id'),
+                        user=user,
+                    )
+                ),
+                is_in_shopping_cart=Exists(
+                    ShoppingCartModel.objects.filter(
+                        recipe=OuterRef('id'),
+                        user=user,
+                    )
+                )
+            )
+        else:
+            queryset = queryset.annotate(
+                is_favorited=Value(False, output_field=BooleanField()),
+                is_in_shopping_cart=Value(False, output_field=BooleanField())
+            )
+
+        return queryset
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:

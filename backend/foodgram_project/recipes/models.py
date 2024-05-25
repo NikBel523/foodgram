@@ -122,6 +122,7 @@ class FavoriteModel(models.Model):
         verbose_name = 'Рецепт в избранном'
         verbose_name_plural = 'Рецепты в избранном'
         unique_together = ('user', 'recipe')
+        default_related_name = 'favorite'
 
 
 class ShoppingCartModel(models.Model):
@@ -136,3 +137,4 @@ class ShoppingCartModel(models.Model):
         verbose_name = 'Рецепт в покупках'
         verbose_name_plural = 'Рецепты в покупках'
         unique_together = ('user', 'recipe')
+        default_related_name = 'shoppingcart'
