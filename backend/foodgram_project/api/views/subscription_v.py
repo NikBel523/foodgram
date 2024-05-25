@@ -2,9 +2,9 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.pagination import LimitOffsetPagination
 
 from api.serializers import SubscriptionUserSerializer
+from api.paginator import LimitPageNumberPagination
 from users.models import SubscriptionModel
 
 User = get_user_model()
@@ -15,7 +15,7 @@ TEXT_ERROR_404 = 'Пользователь не найден.'
 class SubscriptionListView(generics.ListAPIView):
 
     serializer_class = SubscriptionUserSerializer
-    pagination_class = LimitOffsetPagination
+    pagination_class = LimitPageNumberPagination
 
     def get_queryset(self):
         return User.objects.filter(subscription__user=self.request.user)

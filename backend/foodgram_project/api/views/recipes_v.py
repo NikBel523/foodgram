@@ -4,11 +4,11 @@ from django.db.models import BooleanField, Exists, OuterRef, Value
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.filters import RecipeFilter
+from api.paginator import LimitPageNumberPagination
 from api.serializers import (FavoritedSerializer, RecipeReadSerializer,
                              RecipeWriteSerializer, TagSerializer)
 from recipes.models import (FavoriteModel, RecipeModel, ShoppingCartModel,
@@ -26,7 +26,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
 
     serializer_class = RecipeReadSerializer
-    pagination_class = LimitOffsetPagination
+    pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 

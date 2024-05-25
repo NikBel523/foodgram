@@ -3,9 +3,9 @@ from rest_framework.exceptions import ValidationError
 
 from .base64_field import Base64ImageField
 from .users_ser import UserSerializer
-from recipes.models import (IngredientModel, FavoriteModel,
+from recipes.models import (IngredientModel,
                             RecipeIngredientsModel,
-                            RecipeModel, TagModel, ShoppingCartModel)
+                            RecipeModel, TagModel,)
 
 
 class TagSerializer(serializers.ModelSerializer):
