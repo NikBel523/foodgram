@@ -5,7 +5,7 @@ from .base64_field import Base64ImageField
 from .users_ser import UserSerializer
 from recipes.models import (IngredientModel, FavoriteModel,
                             RecipeIngredientsModel,
-                            RecipeModel, TagModel)
+                            RecipeModel, TagModel, ShoppingCartModel)
 
 
 class TagSerializer(serializers.ModelSerializer):

@@ -1,11 +1,13 @@
 import pyshorteners
 
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.pagination import LimitOffsetPagination
 
+from api.filters import RecipeFilter
 from api.serializers import (FavoritedSerializer, RecipeReadSerializer,
                              RecipeWriteSerializer, TagSerializer)
 from recipes.models import FavoriteModel, RecipeModel, TagModel
@@ -24,6 +26,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = RecipeModel.objects.all()
     serializer_class = RecipeReadSerializer
     pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
