@@ -82,6 +82,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 class AddFavoriteView(APIView):
 
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
+
     def post(self, request, recipe_id):
         user = request.user
         try:
