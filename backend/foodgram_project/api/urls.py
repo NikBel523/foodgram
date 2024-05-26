@@ -4,16 +4,17 @@ from rest_framework import routers
 from api.views import (AddFavoriteView, AvatarChangeView,
                        DownloadShoppingCartView, IngredientViewSet,
                        ManageShoppingCartView, RecipeViewSet, SubscribeView,
-                       SubscriptionListView, TagViewSet)
+                       SubscriptionListView, TagViewSet, FoodgramUserViewSet)
 
 app_name = 'api_v1'
 
 router_v1 = routers.DefaultRouter()
+user_router_v1 = routers.DefaultRouter()
 
 router_v1.register('tags', TagViewSet)
 router_v1.register('ingredients', IngredientViewSet)
 router_v1.register('recipes', RecipeViewSet, basename='recipes')
-
+user_router_v1.register(r'users', FoodgramUserViewSet, basename='users')
 
 custom_users_urls = [
     path(
@@ -48,6 +49,7 @@ urlpatterns = [
     path('recipes/', include(recipes_urls)),
     path('', include(router_v1.urls)),
     path('users/', include(custom_users_urls)),
-    path('', include('djoser.urls')),
+    path('', include(user_router_v1.urls)),
+    # path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
 ]
