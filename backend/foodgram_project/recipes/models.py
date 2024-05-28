@@ -90,7 +90,7 @@ class RecipeModel(models.Model):
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
         default_related_name = 'recipes'
-        ordering = ('created_at',)
+        ordering = ('-created_at',)
 
 
 class RecipeIngredientsModel(models.Model):
