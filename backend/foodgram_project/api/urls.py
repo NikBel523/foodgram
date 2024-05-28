@@ -50,6 +50,5 @@ urlpatterns = [
     path('', include(router_v1.urls)),
     path('users/', include(custom_users_urls)),
     path('', include(user_router_v1.urls)),
-    # path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
 ]

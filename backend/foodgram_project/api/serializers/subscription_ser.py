@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from api.serializers.recipes_ser import FavoritedSerializer
 from .users_ser import UserSerializer
+from api.serializers.recipes_ser import FavoritedSerializer
+
 
 User = get_user_model()
 
