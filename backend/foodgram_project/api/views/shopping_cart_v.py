@@ -10,6 +10,7 @@ from recipes.models import RecipeModel, ShoppingCartModel
 
 
 class DownloadShoppingCartView(APIView):
+    """Вью для скачивания списка покупок."""
 
     def get(self, request):
         cart_items = ShoppingCartModel.objects.filter(user=request.user)
@@ -35,6 +36,7 @@ class DownloadShoppingCartView(APIView):
 
 
 class ManageShoppingCartView(APIView):
+    """Вью для управления рецептами в списке покупок."""
 
     def post(self, request, recipe_id):
         try:

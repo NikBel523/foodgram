@@ -7,6 +7,8 @@ from recipes.models import IngredientModel
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    """ВьюСет для модели ингредиентов."""
+
     queryset = IngredientModel.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None

@@ -19,12 +19,15 @@ ERROR_TEXT_404 = 'Рецепт не найден.'
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    """Вьюсет для тегов."""
+
     queryset = TagModel.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    """Вьюсет для рецептов и создания коротких ссылок на них."""
 
     serializer_class = RecipeReadSerializer
     pagination_class = LimitPageNumberPagination
@@ -80,6 +83,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class AddFavoriteView(APIView):
+    """Вью для добавления и удаления избранного."""
 
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
 

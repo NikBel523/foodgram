@@ -73,7 +73,7 @@ class RecipeIngredientsAdmin(admin.ModelAdmin):
 
 
 class UserRecipeLinkAdmin(admin.ModelAdmin):
-    """Админестратор для избранного и списка покупок."""
+    """Администратор для избранного и списка покупок."""
 
     list_display = (
         'user',

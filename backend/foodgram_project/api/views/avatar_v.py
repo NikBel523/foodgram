@@ -7,6 +7,7 @@ User = get_user_model()
 
 
 class AvatarChangeView(generics.RetrieveUpdateDestroyAPIView):
+    """Вью для обновления и удаления аватаров пользователей."""
 
     serializer_class = AvatarChangeSerializer
 

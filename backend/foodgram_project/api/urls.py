@@ -2,9 +2,10 @@ from django.urls import include, path
 from rest_framework import routers
 
 from api.views import (AddFavoriteView, AvatarChangeView,
-                       DownloadShoppingCartView, IngredientViewSet,
-                       ManageShoppingCartView, RecipeViewSet, SubscribeView,
-                       SubscriptionListView, TagViewSet, FoodgramUserViewSet)
+                       DownloadShoppingCartView, FoodgramUserViewSet,
+                       IngredientViewSet, ManageShoppingCartView,
+                       RecipeViewSet, SubscribeView, SubscriptionListView,
+                       TagViewSet)
 
 app_name = 'api_v1'
 
@@ -16,6 +17,7 @@ router_v1.register('ingredients', IngredientViewSet)
 router_v1.register('recipes', RecipeViewSet, basename='recipes')
 user_router_v1.register(r'users', FoodgramUserViewSet, basename='users')
 
+# urls для дополнительного функционала пользователей
 custom_users_urls = [
     path(
         'subscriptions/',
@@ -26,6 +28,7 @@ custom_users_urls = [
     path('me/avatar/', AvatarChangeView.as_view(), name='avatar-patch'),
 ]
 
+# urls для дополнительного функционала в рецептах
 recipes_urls = [
     path(
         'download_shopping_cart/',

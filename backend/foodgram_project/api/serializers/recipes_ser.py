@@ -159,6 +159,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
 
 class FavoritedSerializer(serializers.ModelSerializer):
+    """Сериализатор для вывода сокращённого описания рецепта."""
 
     class Meta:
         model = RecipeModel

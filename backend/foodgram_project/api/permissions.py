@@ -2,6 +2,7 @@ from rest_framework import permissions
 
 
 class IsAuthorOrAdminOrReadOnly(permissions.BasePermission):
+    """Основной допуск для пользователей."""
 
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:

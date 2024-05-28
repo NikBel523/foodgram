@@ -126,6 +126,7 @@ class FavoriteModel(models.Model):
 
 
 class ShoppingCartModel(models.Model):
+    """Модель связей для списка покупок."""
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     recipe = models.ForeignKey(RecipeModel, on_delete=models.CASCADE)

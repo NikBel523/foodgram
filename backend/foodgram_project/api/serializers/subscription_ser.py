@@ -9,6 +9,8 @@ User = get_user_model()
 
 
 class SubscriptionUserSerializer(UserSerializer):
+    """Сериализатор для работы с подписками."""
+
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 

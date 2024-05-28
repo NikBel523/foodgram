@@ -1,5 +1,5 @@
-from rest_framework.permissions import IsAuthenticated
 from djoser.views import UserViewSet as DjoserUserViewSet
+from rest_framework.permissions import IsAuthenticated
 
 
 class FoodgramUserViewSet(DjoserUserViewSet):

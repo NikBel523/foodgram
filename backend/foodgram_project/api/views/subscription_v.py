@@ -13,6 +13,7 @@ TEXT_ERROR_404 = 'Пользователь не найден.'
 
 
 class SubscriptionListView(generics.ListAPIView):
+    """Вью для вывода списка подписок пользователя."""
 
     serializer_class = SubscriptionUserSerializer
     pagination_class = LimitPageNumberPagination
@@ -22,6 +23,7 @@ class SubscriptionListView(generics.ListAPIView):
 
 
 class SubscribeView(APIView):
+    """Вью для добавления и удаления подписок."""
 
     def post(self, request, id):
         user = request.user
@@ -36,7 +38,7 @@ class SubscribeView(APIView):
 
         if user == subscription:
             return Response(
-                {'errors': 'нельзя подписаться на себя.'},
+                {'errors': 'Нельзя подписаться на себя.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
