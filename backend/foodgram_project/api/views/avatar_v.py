@@ -1,9 +1,6 @@
-from django.contrib.auth import get_user_model
 from rest_framework import generics
 
 from api.serializers import AvatarChangeSerializer
-
-User = get_user_model()
 
 
 class AvatarChangeView(generics.RetrieveUpdateDestroyAPIView):
