@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 from django.db import models
 
 NAME_MAX_LENGTH = 150
@@ -33,12 +34,22 @@ class IngredientModel(models.Model):
         verbose_name='Название ингредиента',
     )
 
-    measurement_unit = models.CharField(max_length=16)
+    measurement_unit = models.CharField(
+        max_length=16,
+        verbose_name='Ед. измерения',
+    )
 
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
         default_related_name = 'ingredient'
+        ordering = ('name',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'measurement_unit'],
+                name='unique_ingredient',
+            ),
+        ]
 
     def __str__(self):
         return self.name
@@ -74,8 +85,14 @@ class RecipeModel(models.Model):
 
     text = models.TextField(verbose_name='Описание рецепта')
 
-    cooking_time = models.SmallIntegerField(
+    cooking_time = models.PositiveIntegerField(
         verbose_name='Время приготовления, мин.',
+        validators=[
+            MinValueValidator(
+                limit_value=1,
+                message='Нужно назначить время приготовления.',
+            ),
+        ],
     )
 
     created_at = models.DateTimeField(
@@ -98,44 +115,72 @@ class RecipeIngredientsModel(models.Model):
 
     recipe_name = models.ForeignKey(RecipeModel, on_delete=models.CASCADE)
     name = models.ForeignKey(IngredientModel, on_delete=models.CASCADE)
-    amount = models.SmallIntegerField(verbose_name='Количество')
+    amount = models.PositiveIntegerField(
+        verbose_name='Количество',
+        validators=[
+            MinValueValidator(
+                limit_value=1,
+                message='Нужно назначить количество ингредиентов.',
+            ),
+        ],
+    )
 
     class Meta:
         verbose_name = 'Ингредиент в рецепте'
         verbose_name_plural = 'Ингредиенты в рецепте'
         default_related_name = 'recipeingredients'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe_name', 'name'],
+                name='unique_ingredient_in_recipe',
+            ),
+        ]
 
     def __str__(self):
         return f'{self.name} для рецпета {self.recipe_name}'
 
 
-class FavoriteModel(models.Model):
-    """Отслеживает связи рецепт-пользователь, формирует избранное."""
+class BaseRecipeUserModel(models.Model):
+    """Базовая модель для связей рецепт-пользователь."""
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     recipe = models.ForeignKey(RecipeModel, on_delete=models.CASCADE)
 
     class Meta:
+        abstract = True
+
+
+class FavoriteModel(BaseRecipeUserModel):
+    """Модель формирующая связи в избранном."""
+
+    class Meta:
         verbose_name = 'Рецепт в избранном'
         verbose_name_plural = 'Рецепты в избранном'
-        unique_together = ('user', 'recipe')
         default_related_name = 'favorite'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_recipe_user_favor',
+            ),
+        ]
 
     def __str__(self):
         return f'{self.recipe} добавлен {self.user}'
 
 
-class ShoppingCartModel(models.Model):
-    """Модель связей для списка покупок."""
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(RecipeModel, on_delete=models.CASCADE)
+class ShoppingCartModel(BaseRecipeUserModel):
+    """Модель формирующая связи в списке покупок."""
 
     class Meta:
         verbose_name = 'Рецепт в покупках'
         verbose_name_plural = 'Рецепты в покупках'
-        unique_together = ('user', 'recipe')
         default_related_name = 'shoppingcart'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_recipe_user_cart',
+            ),
+        ]
 
     def __str__(self):
         return f'{self.recipe} добавлен в покупки {self.user}'
