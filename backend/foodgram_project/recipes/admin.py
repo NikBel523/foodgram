@@ -11,6 +11,7 @@ class IngredientsInline(admin.TabularInline):
     model = RecipeModel.ingredients.through
 
 
+@admin.register(TagModel)
 class TagAdmin(admin.ModelAdmin):
     """Администратор для тегов."""
 
@@ -22,6 +23,7 @@ class TagAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+@admin.register(RecipeModel)
 class RecipeAdmin(admin.ModelAdmin):
     """Администратор для рецептов."""
 
@@ -48,6 +50,7 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.fav_count
 
 
+@admin.register(IngredientModel)
 class IngredientAdmin(admin.ModelAdmin):
     """Администратор для отдельных ингредиентов."""
 
@@ -59,6 +62,7 @@ class IngredientAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+@admin.register(RecipeIngredientsModel)
 class RecipeIngredientsAdmin(admin.ModelAdmin):
     """Администратор для ингредиентов в составе рецептов."""
 
@@ -71,6 +75,7 @@ class RecipeIngredientsAdmin(admin.ModelAdmin):
     list_filter = ('recipe_name', 'name')
 
 
+@admin.register(FavoriteModel, ShoppingCartModel)
 class UserRecipeLinkAdmin(admin.ModelAdmin):
     """Администратор для избранного и списка покупок."""
 
@@ -80,11 +85,3 @@ class UserRecipeLinkAdmin(admin.ModelAdmin):
     )
 
     search_fields = ('user',)
-
-
-admin.site.register(TagModel, TagAdmin)
-admin.site.register(RecipeModel, RecipeAdmin)
-admin.site.register(IngredientModel, IngredientAdmin)
-admin.site.register(FavoriteModel, UserRecipeLinkAdmin)
-admin.site.register(ShoppingCartModel, UserRecipeLinkAdmin)
-admin.site.register(RecipeIngredientsModel, RecipeIngredientsAdmin)

@@ -1,10 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group
 
 from .models import FoodgramUser, SubscriptionModel
 
 
-class FoodgramUserAdmin(admin.ModelAdmin):
+@admin.register(FoodgramUser)
+class FoodgramUserAdmin(UserAdmin):
     """Администратор пользователей."""
 
     list_display = (
@@ -19,6 +21,7 @@ class FoodgramUserAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(SubscriptionModel)
 class SubscriptionAdmin(admin.ModelAdmin):
     """Администратор для подписок."""
 
@@ -30,5 +33,4 @@ class SubscriptionAdmin(admin.ModelAdmin):
     search_fields = ('user',)
 
 
-admin.site.register(FoodgramUser, UserAdmin)
-admin.site.register(SubscriptionModel, SubscriptionAdmin)
+admin.site.unregister(Group)
