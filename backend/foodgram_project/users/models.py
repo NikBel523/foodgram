@@ -1,3 +1,4 @@
+from django.contrib.auth import validators
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import F, Q
@@ -13,6 +14,7 @@ class FoodgramUser(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
+    # Используется в api.permissions.IsAuthorOrAdminOrReadOnly
     role = models.CharField(
         max_length=MAX_LENGTH_150,
         default=ROLE_USER,
@@ -28,7 +30,11 @@ class FoodgramUser(AbstractUser):
         default=None
     )
 
-    username = models.CharField(max_length=MAX_LENGTH_150, unique=True)
+    username = models.CharField(
+        max_length=MAX_LENGTH_150,
+        unique=True,
+        validators=[validators.UnicodeUsernameValidator()],
+    )
     email = models.EmailField(unique=True)
 
     first_name = models.CharField(max_length=MAX_LENGTH_150)
@@ -44,13 +50,13 @@ class FoodgramUser(AbstractUser):
 
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return self.username
-
     class Meta:
         ordering = ('username',)
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+    def __str__(self):
+        return self.username
 
 
 class SubscriptionModel(models.Model):
@@ -63,9 +69,6 @@ class SubscriptionModel(models.Model):
     subscription = models.ForeignKey(
         FoodgramUser, on_delete=models.CASCADE, related_name='subscription'
     )
-
-    def __str__(self) -> str:
-        return f'{self.user} на {self.subscription}'
 
     class Meta:
         verbose_name = 'Подписка'
@@ -80,3 +83,6 @@ class SubscriptionModel(models.Model):
                 name='cant_follow_yourself',
             ),
         ]
+
+    def __str__(self) -> str:
+        return f'{self.user} на {self.subscription}'
