@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.serializers import FavoritedSerializer
+from api.serializers import ShortRecipeInfoSerializer
 from api.utils import generate_shopping_cart_txt
 from recipes.models import RecipeModel, ShoppingCartModel
 
@@ -55,7 +55,7 @@ class ManageShoppingCartView(APIView):
                 {'errors': 'Рецепт уже в корзине.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = FavoritedSerializer(recipe)
+        serializer = ShortRecipeInfoSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, recipe_id):

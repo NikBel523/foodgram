@@ -1,7 +1,7 @@
 from .base64_field import Base64ImageField
 from .ingredients_ser import IngredientSerializer
 from .recipes_ser import (
-    FavoritedSerializer,
+    ShortRecipeInfoSerializer,
     RecipeIngredientsSerializer,
     RecipeReadSerializer,
     RecipeWriteSerializer,
@@ -17,7 +17,7 @@ __all__ = [
     AvatarChangeSerializer,
     Base64ImageField,
     SubscriptionUserSerializer,
-    FavoritedSerializer,
+    ShortRecipeInfoSerializer,
     RecipeIngredientsSerializer,
     IngredientSerializer,
     RecipeReadSerializer,

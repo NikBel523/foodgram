@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from .users_ser import UserSerializer
-from api.serializers.recipes_ser import FavoritedSerializer
+from api.serializers.recipes_ser import ShortRecipeInfoSerializer
 from users.models import SubscriptionModel
 
 
@@ -25,7 +25,7 @@ class SubscriptionUserSerializer(UserSerializer):
         recipes_qs = obj.recipes.all()
         if recipes_limit:
             recipes_qs = recipes_qs[:recipes_limit]
-        return FavoritedSerializer(recipes_qs, many=True).data
+        return ShortRecipeInfoSerializer(recipes_qs, many=True).data
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()

@@ -161,7 +161,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return instance
 
 
-class FavoritedSerializer(serializers.ModelSerializer):
+class ShortRecipeInfoSerializer(serializers.ModelSerializer):
     """Сериализатор для вывода сокращённого описания рецепта."""
 
     class Meta:

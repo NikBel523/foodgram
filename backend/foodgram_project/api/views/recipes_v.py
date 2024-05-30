@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from api.filters import RecipeFilter
 from api.paginator import LimitPageNumberPagination
 from api.permissions import IsAuthorOrAdminOrReadOnly
-from api.serializers import (FavoritedSerializer, RecipeReadSerializer,
+from api.serializers import (ShortRecipeInfoSerializer, RecipeReadSerializer,
                              RecipeWriteSerializer, TagSerializer)
 from recipes.models import (FavoriteModel, RecipeModel, ShoppingCartModel,
                             TagModel)
@@ -107,7 +107,7 @@ class AddFavoriteView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = FavoritedSerializer(recipe)
+        serializer = ShortRecipeInfoSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, recipe_id):
@@ -123,12 +123,11 @@ class AddFavoriteView(APIView):
         favorite = FavoriteModel.objects.filter(
             user=user,
             recipe=recipe,
-        ).first()
+        ).delete()
         if favorite:
             favorite.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(
-                {'errors': 'В избранном нет выбранного рецепта.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(
+            {'errors': 'В избранном нет выбранного рецепта.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
