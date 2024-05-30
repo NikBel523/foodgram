@@ -25,7 +25,6 @@ custom_users_urls = [
         name='subscription-list',
     ),
     path('<int:id>/subscribe/', SubscribeView.as_view(), name='subscribe'),
-    path('me/avatar/', AvatarChangeView.as_view(), name='avatar-patch'),
 ]
 
 # urls для дополнительного функционала в рецептах
