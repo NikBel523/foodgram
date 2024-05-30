@@ -8,7 +8,6 @@ from api.views import (
     IngredientViewSet,
     ManageShoppingCartView,
     RecipeViewSet,
-    SubscribeView,
     TagViewSet,
 )
 
@@ -22,10 +21,6 @@ router_v1.register('ingredients', IngredientViewSet)
 router_v1.register('recipes', RecipeViewSet, basename='recipes')
 user_router_v1.register(r'users', FoodgramUserViewSet, basename='users')
 
-# urls для дополнительного функционала пользователей
-custom_users_urls = [
-    path('<int:id>/subscribe/', SubscribeView.as_view(), name='subscribe'),
-]
 
 # urls для дополнительного функционала в рецептах
 recipes_urls = [
@@ -50,7 +45,6 @@ recipes_urls = [
 urlpatterns = [
     path('recipes/', include(recipes_urls)),
     path('', include(router_v1.urls)),
-    path('users/', include(custom_users_urls)),
     path('', include(user_router_v1.urls)),
     path('auth/', include('djoser.urls.authtoken')),
 ]

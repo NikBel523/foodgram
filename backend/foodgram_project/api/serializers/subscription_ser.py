@@ -32,7 +32,26 @@ class SubscriptionUserSerializer(UserSerializer):
 
 
 class SubscriptionManageSerializer(serializers.ModelSerializer):
-
-
     class Meta:
         model = SubscriptionModel
+        fields = ('user', 'subscription')
+        read_only_fields = ('user',)
+
+    def validate(self, data):
+        user = self.context['request'].user
+        subscription = data['subscription']
+
+        if user == subscription:
+            raise serializers.ValidationError('Нельзя подписаться на себя.')
+
+        if SubscriptionModel.objects.filter(
+            user=user,
+            subscription=subscription,
+        ).exists():
+            raise serializers.ValidationError('Подписка уже существует.')
+
+        return data
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
