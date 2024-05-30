@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
@@ -27,6 +28,7 @@ class FoodgramUserViewSet(DjoserUserViewSet):
 
         return [permission() for permission in self.permission_classes]
 
+    # actions для работы с аватарами
     @action(methods=['put'], detail=False, url_path='me/avatar')
     def avatar(self, request):
         """Добавление аватара"""
@@ -46,6 +48,7 @@ class FoodgramUserViewSet(DjoserUserViewSet):
         serializer.save()
         return serializer
 
+    # actions для работы с подписками
     @action(
         detail=False,
         methods=['get'],
@@ -71,15 +74,9 @@ class FoodgramUserViewSet(DjoserUserViewSet):
         permission_classes=[IsAuthenticated],
         url_path='subscribe',
     )
-    def subscribe(self, request, id=None):
+    def subscribe(self, request, id):
         """Подписка на пользователя или отмена подписки."""
-        try:
-            subscription = User.objects.get(id=id)
-        except User.DoesNotExist:
-            return Response(
-                {'errors': 'Пользователь не найден.'},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        subscription = get_object_or_404(User, id=id)
 
         if request.method == 'POST':
             return self._create_subscription(request, subscription)
