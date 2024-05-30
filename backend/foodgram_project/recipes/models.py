@@ -137,7 +137,7 @@ class RecipeIngredientsModel(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.name} для рецпета {self.recipe_name}'
+        return f'{self.name} для рецепта {self.recipe_name}'
 
 
 class BaseRecipeUserModel(models.Model):
