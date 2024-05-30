@@ -108,7 +108,7 @@ class FoodgramUserViewSet(DjoserUserViewSet):
             subscription=subscription,
         ).delete()
 
-        if subscription_instance:
+        if subscription_instance[0]:
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         return Response(
