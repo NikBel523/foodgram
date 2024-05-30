@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from .users_ser import UserSerializer
 from api.serializers.recipes_ser import FavoritedSerializer
+from users.models import SubscriptionModel
 
 
 User = get_user_model()
@@ -28,3 +29,10 @@ class SubscriptionUserSerializer(UserSerializer):
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
+
+
+class SubscriptionManageSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = SubscriptionModel

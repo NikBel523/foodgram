@@ -9,7 +9,6 @@ from api.views import (
     ManageShoppingCartView,
     RecipeViewSet,
     SubscribeView,
-    SubscriptionListView,
     TagViewSet,
 )
 
@@ -25,11 +24,6 @@ user_router_v1.register(r'users', FoodgramUserViewSet, basename='users')
 
 # urls для дополнительного функционала пользователей
 custom_users_urls = [
-    path(
-        'subscriptions/',
-        SubscriptionListView.as_view(),
-        name='subscription-list',
-    ),
     path('<int:id>/subscribe/', SubscribeView.as_view(), name='subscribe'),
 ]
 

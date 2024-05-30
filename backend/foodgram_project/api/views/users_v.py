@@ -5,7 +5,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from api.serializers import AvatarChangeSerializer
+from api.paginator import LimitPageNumberPagination
+from api.serializers import AvatarChangeSerializer, SubscriptionUserSerializer
 
 User = get_user_model()
 
@@ -39,3 +40,13 @@ class FoodgramUserViewSet(DjoserUserViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return serializer
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated], url_path='subscriptions')
+    def subscriptions(self, request):
+        """Получение списка подписок текущего пользователя."""
+        user = request.user
+        queryset = User.objects.filter(subscription__user=user)
+        paginator = LimitPageNumberPagination()
+        paginated_queryset = paginator.paginate_queryset(queryset, request)
+        serializer = SubscriptionUserSerializer(paginated_queryset, many=True, context={'request': request})
+        return paginator.get_paginated_response(serializer.data)

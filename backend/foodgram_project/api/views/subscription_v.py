@@ -12,14 +12,14 @@ User = get_user_model()
 TEXT_ERROR_404 = 'Пользователь не найден.'
 
 
-class SubscriptionListView(generics.ListAPIView):
-    """Вью для вывода списка подписок пользователя."""
+# class SubscriptionListView(generics.ListAPIView):
+#     """Вью для вывода списка подписок пользователя."""
 
-    serializer_class = SubscriptionUserSerializer
-    pagination_class = LimitPageNumberPagination
+#     serializer_class = SubscriptionUserSerializer
+#     pagination_class = LimitPageNumberPagination
 
-    def get_queryset(self):
-        return User.objects.filter(subscription__user=self.request.user)
+#     def get_queryset(self):
+#         return User.objects.filter(subscription__user=self.request.user)
 
 
 class SubscribeView(APIView):
@@ -72,12 +72,11 @@ class SubscribeView(APIView):
         subscription_instance = SubscriptionModel.objects.filter(
             user=user,
             subscription=subscription,
-        ).first()
+        ).exists()
         if subscription_instance:
             subscription_instance.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(
-                {'errors': 'Нет подписки на пользователя.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(
+            {'errors': 'Нет подписки на пользователя.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
