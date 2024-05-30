@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -36,10 +37,16 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     tags = TagSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)
-    ingredients = serializers.SerializerMethodField()
+    ingredients = RecipeIngredientsSerializer(
+        many=True,
+        source='recipeingredients',
+    )
 
-    is_favorited = serializers.BooleanField(read_only=True)
-    is_in_shopping_cart = serializers.BooleanField(read_only=True)
+    is_favorited = serializers.BooleanField(read_only=True, default=False)
+    is_in_shopping_cart = serializers.BooleanField(
+        read_only=True,
+        default=False,
+    )
 
     class Meta:
         model = RecipeModel
@@ -47,10 +54,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             'id', 'tags', 'author', 'ingredients', 'is_favorited',
             'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time',
         )
-
-    def get_ingredients(self, obj):
-        ingredients = RecipeIngredientsModel.objects.filter(recipe_name=obj)
-        return RecipeIngredientsSerializer(ingredients, many=True).data
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
@@ -103,39 +106,39 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                     {'ingredients': 'Нужны разные ингредиенты.'},
                 )
             ingredient_names.add(ingredient_name)
-            if ingredient_dict.get('amount', 0) < 1:
-                raise ValidationError({'ingredients': 'Кол-во не меньше 1.'})
-        return value
-
-    def validate_cooking_time(self, value):
-        if value < 1:
-            raise ValidationError({'cooking_time': 'Время не меньше 1.'})
         return value
 
     def to_representation(self, instance):
         return RecipeReadSerializer(instance).data
 
     def _create_or_update_ingredients(self, recipe, ingredients_data):
-        for ingredient_data in ingredients_data:
-            RecipeIngredientsModel.objects.create(
+        recipe_ingredients = [
+            RecipeIngredientsModel(
                 recipe_name=recipe,
                 name=ingredient_data.pop('name')['id'],
-                **ingredient_data,
+                **ingredient_data
             )
+            for ingredient_data in ingredients_data
+        ]
 
+        RecipeIngredientsModel.objects.bulk_create(recipe_ingredients)
+
+    @transaction.atomic
     def create(self, validated_data):
         ingredients_data = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
-        recipe = RecipeModel.objects.create(**validated_data)
+
+        recipe = RecipeModel.objects.create(
+            **validated_data,
+            author=self.context['request'].user,
+        )
         recipe.tags.set(tags)
 
         self._create_or_update_ingredients(recipe, ingredients_data)
 
-        recipe.is_favorited = False
-        recipe.is_in_shopping_cart = False
-
         return recipe
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
