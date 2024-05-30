@@ -1,4 +1,4 @@
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -19,7 +19,13 @@ from api.serializers import (
     TagSerializer,
 )
 from api.utils import generate_shopping_cart_txt
-from recipes.models import FavoriteModel, RecipeModel, ShoppingCartModel, TagModel
+from recipes.models import (
+    FavoriteModel,
+    RecipeIngredientsModel,
+    RecipeModel,
+    ShoppingCartModel,
+    TagModel,
+)
 
 ERROR_TEXT_400 = 'Рецепт не существует.'
 ERROR_TEXT_404 = 'Рецепт не найден.'
@@ -100,21 +106,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def download_shopping_cart(self, request):
         """Загрузка списка покупок."""
-        cart_items = ShoppingCartModel.objects.filter(user=request.user)
-        ingredients = {}
-
-        for item in cart_items:
-            for ingredient in item.recipe.recipeingredients.all():
-                ingredient_name = ingredient.name.name
-                measurement_unit = ingredient.name.measurement_unit
-
-                if ingredient_name in ingredients:
-                    ingredients[ingredient_name]['amount'] += ingredient.amount
-                else:
-                    ingredients[ingredient_name] = {
-                        'amount': ingredient.amount,
-                        'measurement_unit': measurement_unit,
-                    }
+        ingredients = RecipeIngredientsModel.objects.filter(
+            recipe_name__shoppingcart__user=request.user
+        ).values(
+            'name__name', 'name__measurement_unit'
+        ).annotate(
+            total_amount=Sum('amount')
+        )
 
         txt_content = generate_shopping_cart_txt(ingredients)
         response = HttpResponse(txt_content, content_type='text/plain')
