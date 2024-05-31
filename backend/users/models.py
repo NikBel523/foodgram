@@ -14,16 +14,6 @@ class FoodgramUser(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
-    # Используется в api.permissions.IsAuthorOrAdminOrReadOnly
-    role = models.CharField(
-        max_length=MAX_LENGTH_150,
-        default=ROLE_USER,
-        choices=(
-            (ROLE_USER, 'user'),
-            (ROLE_ADMIN, 'admin'),
-        )
-    )
-
     avatar = models.ImageField(
         upload_to='images/avatars/',
         null=True,
@@ -39,16 +29,6 @@ class FoodgramUser(AbstractUser):
 
     first_name = models.CharField(max_length=MAX_LENGTH_150)
     last_name = models.CharField(max_length=MAX_LENGTH_150)
-
-    @property
-    def is_admin(self):
-        return self.role == ROLE_ADMIN or self.is_superuser or self.is_staff
-
-    def save(self, *args, **kwargs):
-        if self.is_superuser:
-            self.role = ROLE_ADMIN
-
-        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ('username',)

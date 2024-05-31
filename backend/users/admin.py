@@ -12,7 +12,6 @@ class FoodgramUserAdmin(UserAdmin):
     list_display = (
         'username',
         'email',
-        'role',
     )
 
     search_fields = (
