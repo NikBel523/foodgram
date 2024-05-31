@@ -1,8 +1,12 @@
+import random
+import string
+
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
 NAME_MAX_LENGTH = 150
+SHORT_LINK_LENGTH =10
 
 User = get_user_model()
 
@@ -99,6 +103,31 @@ class RecipeModel(models.Model):
         auto_now_add=True,
         verbose_name='Добавлено',
     )
+
+    short_link = models.CharField(
+        max_length=10,
+        unique=True,
+        blank=True,
+        null=True,
+        verbose_name='Короткая ссылка'
+    )
+
+    def generate_short_link(self):
+        """Генерация короткой ссылки."""
+        characters = string.ascii_letters + string.digits
+        short_link = ''.join(
+            random.choice(characters) for _ in range(SHORT_LINK_LENGTH)
+        )
+        while RecipeModel.objects.filter(short_link=short_link).exists():
+            short_link = ''.join(
+                random.choice(characters) for _ in range(SHORT_LINK_LENGTH)
+            )
+        return short_link
+
+    def save(self, *args, **kwargs):
+        if not self.short_link:
+            self.short_link = self.generate_short_link()
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Рецепт'

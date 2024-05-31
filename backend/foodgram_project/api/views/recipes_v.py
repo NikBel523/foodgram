@@ -80,10 +80,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Вывод короткой ссылки на рецепт."""
         recipe = self.get_object()
         base_url = request.build_absolute_uri('/')[:-1]
-        recipe_url = f"{base_url}/recipes/{recipe.id}/"
-
-        s = pyshorteners.Shortener()
-        short_url = s.tinyurl.short(recipe_url)
+        short_url = f"{base_url}/{recipe.short_link}/"
 
         return Response({'short-link': short_url}, status=status.HTTP_200_OK)
 
