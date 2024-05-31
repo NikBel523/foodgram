@@ -21,11 +21,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-        return (request
-                and request.user.is_authenticated
-                and SubscriptionModel.objects.filter(
-                    user=request.user,
-                    subscription=obj).exists())
+        return bool(
+            request
+            and request.user.is_authenticated
+            and SubscriptionModel.objects.filter(
+                user=request.user,
+                subscription=obj).exists()
+        )
 
 
 class AvatarChangeSerializer(serializers.ModelSerializer):
