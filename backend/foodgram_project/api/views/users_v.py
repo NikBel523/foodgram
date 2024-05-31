@@ -29,16 +29,16 @@ class FoodgramUserViewSet(DjoserUserViewSet):
         return [permission() for permission in self.permission_classes]
 
     # actions для работы с аватарами
-    @action(methods=['put'], detail=False, url_path='me/avatar')
+    @action(methods=['patch', 'delete'], detail=False, url_path='me/avatar')
     def avatar(self, request):
-        """Добавление аватара"""
-        serializer = self._set_avatar(request.data)
-        return Response(serializer.data)
-
-    @avatar.mapping.delete
-    def delete_avatar(self, request):
-        """Удаление аватара"""
-        self._set_avatar(request.data)
+        """Добавление и удаление аватара"""
+        if request.method == 'PATCH':
+            serializer = self._set_avatar(request.data)
+            return Response(serializer.data)
+        instance = self.get_instance()
+        instance.avatar.delete()
+        instance.avatar = None
+        instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def _set_avatar(self, data):
