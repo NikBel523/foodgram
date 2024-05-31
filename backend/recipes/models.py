@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 NAME_MAX_LENGTH = 150
-SHORT_LINK_LENGTH =10
+SHORT_LINK_LENGTH = 10
 
 User = get_user_model()
 
