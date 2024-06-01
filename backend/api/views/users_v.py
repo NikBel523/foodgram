@@ -29,12 +29,15 @@ class FoodgramUserViewSet(DjoserUserViewSet):
         return [permission() for permission in self.permission_classes]
 
     # actions для работы с аватарами
-    @action(methods=['patch', 'delete'], detail=False, url_path='me/avatar')
+    @action(methods=['put'], detail=False, url_path='me/avatar')
     def avatar(self, request):
-        """Добавление и удаление аватара"""
-        if request.method == 'PATCH':
-            serializer = self._set_avatar(request.data)
-            return Response(serializer.data)
+        """Добавление аватара."""
+        serializer = self._set_avatar(request.data)
+        return Response(serializer.data)
+
+    @avatar.mapping.delete
+    def delete_avatar(self, request):
+        """Удаление аватара."""
         instance = self.get_instance()
         instance.avatar.delete()
         instance.avatar = None
@@ -70,18 +73,20 @@ class FoodgramUserViewSet(DjoserUserViewSet):
 
     @action(
         detail=True,
-        methods=['post', 'delete'],
+        methods=['post'],
         permission_classes=[IsAuthenticated],
         url_path='subscribe',
     )
-    def subscribe(self, request, id):
-        """Подписка на пользователя или отмена подписки."""
+    def subscription(self, request, id):
+        """Подписка на пользователя."""
         subscription = get_object_or_404(User, id=id)
+        return self._create_subscription(request, subscription)
 
-        if request.method == 'POST':
-            return self._create_subscription(request, subscription)
-        elif request.method == 'DELETE':
-            return self._delete_subscription(request, subscription)
+    @subscription.mapping.delete
+    def delete_subscription(self, request, id):
+        """Отмена подписки на пользователя."""
+        subscription = get_object_or_404(User, id=id)
+        return self._delete_subscription(request, subscription)
 
     def _create_subscription(self, request, subscription):
         """Создание подписки на пользователя."""
