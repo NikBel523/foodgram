@@ -5,6 +5,8 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
+from django.db.models import Exists, OuterRef
+
 from foodgram_project.constants import (
     INGREDIENT_MIN_LIMIT,
     MEASUREMENT_UNIT_MAX_LENGTH,
@@ -68,6 +70,72 @@ class IngredientModel(models.Model):
         return self.name
 
 
+class BaseRecipeUserModel(models.Model):
+    """Базовая модель для связей рецепт-пользователь."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    recipe = models.ForeignKey('RecipeModel', on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+
+class FavoriteModel(BaseRecipeUserModel):
+    """Модель формирующая связи в избранном."""
+
+    class Meta:
+        verbose_name = 'Рецепт в избранном'
+        verbose_name_plural = 'Рецепты в избранном'
+        default_related_name = 'favorite'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_recipe_user_favor',
+            ),
+        ]
+
+    def __str__(self):
+        return f'{self.recipe} добавлен {self.user}'
+
+
+class ShoppingCartModel(BaseRecipeUserModel):
+    """Модель формирующая связи в списке покупок."""
+
+    class Meta:
+        verbose_name = 'Рецепт в покупках'
+        verbose_name_plural = 'Рецепты в покупках'
+        default_related_name = 'shoppingcart'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_recipe_user_cart',
+            ),
+        ]
+
+    def __str__(self):
+        return f'{self.recipe} добавлен в покупки {self.user}'
+
+
+class AnnotateRecipeQuerySet(models.QuerySet):
+    """Отдельный запрос для аннотации рецептов."""
+
+    def with_user_annotations(self, user):
+        return self.annotate(
+            is_favorited=Exists(
+                FavoriteModel.objects.filter(
+                    recipe=OuterRef('id'),
+                    user=user,
+                )
+            ),
+            is_in_shopping_cart=Exists(
+                ShoppingCartModel.objects.filter(
+                    recipe=OuterRef('id'),
+                    user=user,
+                )
+            )
+        )
+
+
 class RecipeModel(models.Model):
     """Модель отвечающая за полный рецепт."""
 
@@ -120,6 +188,8 @@ class RecipeModel(models.Model):
         null=True,
         verbose_name='Короткая ссылка'
     )
+
+    objects = AnnotateRecipeQuerySet.as_manager()
 
     def generate_short_link(self):
         """Генерация короткой ссылки."""
@@ -176,49 +246,3 @@ class RecipeIngredientsModel(models.Model):
 
     def __str__(self):
         return f'{self.name} для рецепта {self.recipe_name}'
-
-
-class BaseRecipeUserModel(models.Model):
-    """Базовая модель для связей рецепт-пользователь."""
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(RecipeModel, on_delete=models.CASCADE)
-
-    class Meta:
-        abstract = True
-
-
-class FavoriteModel(BaseRecipeUserModel):
-    """Модель формирующая связи в избранном."""
-
-    class Meta:
-        verbose_name = 'Рецепт в избранном'
-        verbose_name_plural = 'Рецепты в избранном'
-        default_related_name = 'favorite'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'recipe'],
-                name='unique_recipe_user_favor',
-            ),
-        ]
-
-    def __str__(self):
-        return f'{self.recipe} добавлен {self.user}'
-
-
-class ShoppingCartModel(BaseRecipeUserModel):
-    """Модель формирующая связи в списке покупок."""
-
-    class Meta:
-        verbose_name = 'Рецепт в покупках'
-        verbose_name_plural = 'Рецепты в покупках'
-        default_related_name = 'shoppingcart'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'recipe'],
-                name='unique_recipe_user_cart',
-            ),
-        ]
-
-    def __str__(self):
-        return f'{self.recipe} добавлен в покупки {self.user}'
