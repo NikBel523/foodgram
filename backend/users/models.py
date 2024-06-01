@@ -4,8 +4,6 @@ from django.db import models
 from django.db.models import F, Q
 
 MAX_LENGTH_150 = 150
-ROLE_USER = 'user'
-ROLE_ADMIN = 'admin'
 
 
 class FoodgramUser(AbstractUser):
