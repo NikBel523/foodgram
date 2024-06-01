@@ -65,14 +65,12 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     )
     ingredients = RecipeIngredientsSerializer(many=True)
     image = Base64ImageField()
-    author = UserSerializer(read_only=True)
 
     class Meta:
         model = RecipeModel
         fields = (
             'id',
             'tags',
-            'author',
             'ingredients',
             'name',
             'image',
