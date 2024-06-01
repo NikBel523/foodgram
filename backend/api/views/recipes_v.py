@@ -84,21 +84,24 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         return Response({'short-link': short_url}, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['post', 'delete'], url_path='favorite')
-    def favorite(self, request, pk=None):
-        """Добавление и удаление избранного."""
+    @action(detail=True, methods=['post'], url_path='favorite')
+    def favorite(self, request, pk):
+        """Добавление избранного."""
         if request.method == 'POST':
             return self._create_favorite_or_cart(
                 FavoriteSerializer,
                 pk,
                 request,
             )
-        elif request.method == 'DELETE':
-            return self._delete_from_favorite_or_cart(
-                FavoriteModel,
-                pk,
-                request,
-            )
+
+    @favorite.mapping.delete
+    def delete_favorite(self, request, pk):
+        """Удаление избранного."""
+        return self._delete_from_favorite_or_cart(
+            FavoriteModel,
+            pk,
+            request,
+        )
 
     @action(detail=False, methods=['get'])
     def download_shopping_cart(self, request):
@@ -116,21 +119,24 @@ class RecipeViewSet(viewsets.ModelViewSet):
         response['Content-Disposition'] = 'attachment; filename="список.txt"'
         return response
 
-    @action(detail=True, methods=['post', 'delete'], url_path='shopping_cart')
+    @action(detail=True, methods=['post'], url_path='shopping_cart')
     def shopping_cart(self, request, pk=None):
-        """Добавление и удаление рецептов списка покупок."""
+        """Добавление рецептов списка покупок."""
         if request.method == 'POST':
             return self._create_favorite_or_cart(
                 ShoppingCartSerializer,
                 pk,
                 request,
             )
-        elif request.method == 'DELETE':
-            return self._delete_from_favorite_or_cart(
-                ShoppingCartModel,
-                pk,
-                request,
-            )
+
+    @shopping_cart.mapping.delete
+    def delete_shopping_cart_recipe(self, request, pk):
+        """Удаление рецептов списка покупок."""
+        return self._delete_from_favorite_or_cart(
+            ShoppingCartModel,
+            pk,
+            request,
+        )
 
     # Вспомогательные методы для добавления и удаления избранного и списка
     def _delete_from_favorite_or_cart(self, model, pk, request):
@@ -145,20 +151,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def _create_favorite_or_cart(self, serializer_class, pk, request):
         user = request.user
-        try:
-            recipe = RecipeModel.objects.get(id=pk)
-        except RecipeModel.DoesNotExist:
-            return Response(
-                {'errors': 'Рецепт не найден'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        recipe = get_object_or_404(RecipeModel, id=pk)
 
         data = {'user': user.id, 'recipe': recipe.id}
         serializer = serializer_class(data=data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                ShortRecipeInfoSerializer(recipe).data,
-                status=status.HTTP_201_CREATED,
-            )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            ShortRecipeInfoSerializer(recipe).data,
+            status=status.HTTP_201_CREATED,
+        )
