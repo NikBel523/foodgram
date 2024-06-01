@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from recipes.models import ShoppingCartModel
 
@@ -9,10 +10,11 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCartModel
         fields = ('user', 'recipe')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=ShoppingCartModel.objects.all(),
+                fields=['user', 'recipe'],
+                message='Рецепт уже в списке покупок.'
+            )
+        ]
 
-    def validate(self, data):
-        user = data['user']
-        recipe = data['recipe']
-        if ShoppingCartModel.objects.filter(user=user, recipe=recipe).exists():
-            raise serializers.ValidationError('Рецепт уже в списке покупок.')
-        return data

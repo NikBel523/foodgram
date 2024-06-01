@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from .users_ser import UserSerializer
 from api.serializers.recipes_ser import ShortRecipeInfoSerializer
@@ -35,6 +36,13 @@ class SubscriptionManageSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubscriptionModel
         fields = ('user', 'subscription')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=SubscriptionModel.objects.all(),
+                fields=['user', 'subscription'],
+                message='Вы уже подписаны на пользователя'
+            )
+        ]
 
     def validate(self, data):
         user = self.context['request'].user
@@ -42,11 +50,5 @@ class SubscriptionManageSerializer(serializers.ModelSerializer):
 
         if user == subscription:
             raise serializers.ValidationError('Нельзя подписаться на себя.')
-
-        if SubscriptionModel.objects.filter(
-            user=user,
-            subscription=subscription,
-        ).exists():
-            raise serializers.ValidationError('Подписка уже существует.')
 
         return data
