@@ -80,7 +80,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         required_fields = [
-            'tags', 'ingredients', 'image', 'name', 'text', 'cooking_time',
+            'tags', 'ingredients', 'name', 'text', 'cooking_time',
         ]
         for field in required_fields:
             if field not in data or not data[field]:
@@ -89,6 +89,11 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                         f'Поле {field} обязательноедля создания рецепта.'},
                 )
         return data
+
+    def validate_image(self, value):
+        if not value:
+            raise ValidationError('Поле image обязательно.')
+        return value
 
     def validate_tags(self, value):
         if len(value) != len(set(value)):
@@ -141,22 +146,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
 
-        instance.image = validated_data.get('image', instance.image)
-        instance.name = validated_data.get('name', instance.name)
-        instance.text = validated_data.get('text', instance.text)
-        instance.cooking_time = validated_data.get(
-            'cooking_time',
-            instance.cooking_time,
-        )
-        instance.save()
-
         instance.ingredients.clear()
         self._create_or_update_ingredients(instance, ingredients)
 
         instance.tags.clear()
         instance.tags.set(tags)
 
-        return instance
+        return super().update(instance, validated_data)
 
 
 class ShortRecipeInfoSerializer(serializers.ModelSerializer):
