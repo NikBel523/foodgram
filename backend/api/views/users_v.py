@@ -86,7 +86,7 @@ class FoodgramUserViewSet(DjoserUserViewSet):
     def _create_subscription(self, request, subscription):
         """Создание подписки на пользователя."""
         serializer = SubscriptionManageSerializer(
-            data={'subscription': subscription.id},
+            data={'user': request.user.id, 'subscription': subscription.id},
             context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
