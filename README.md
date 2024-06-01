@@ -66,4 +66,13 @@
 После запуска сервиса доступен на: [Swagger](http://127.0.0.1:8080/redoc/).
 
 
+## Стек технологий backend
+- Python
+- Django
+- Django REST Framework
+- PostgreSQL
+- Nginx
+- gunicorn
+- Docker
+
 Автор: [Беляков Никита>](https://github.com/NikBel523)
