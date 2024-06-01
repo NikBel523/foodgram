@@ -18,6 +18,7 @@ from api.serializers import (
     TagSerializer,
 )
 from api.utils import generate_shopping_cart_txt
+from foodgram_project.settings import SHORT_URL_PREFIX
 from recipes.models import (
     FavoriteModel,
     RecipeIngredientsModel,
@@ -79,7 +80,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Вывод короткой ссылки на рецепт."""
         recipe = self.get_object()
         base_url = request.build_absolute_uri('/')[:-1]
-        short_url = f"{base_url}/{recipe.short_link}/"
+        short_url = f'{base_url}/{SHORT_URL_PREFIX}/{recipe.short_link}/'
 
         return Response({'short-link': short_url}, status=status.HTTP_200_OK)
 

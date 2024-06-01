@@ -161,3 +161,5 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 6,
 
 }
+
+SHORT_URL_PREFIX = 's'

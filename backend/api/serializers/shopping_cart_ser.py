@@ -17,4 +17,3 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
                 message='Рецепт уже в списке покупок.'
             )
         ]
-
