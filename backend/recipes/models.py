@@ -5,8 +5,14 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
-NAME_MAX_LENGTH = 150
-SHORT_LINK_LENGTH = 10
+from foodgram_project.constants import (
+    INGREDIENT_MIN_LIMIT,
+    MEASUREMENT_UNIT_MAX_LENGTH,
+    MIN_COOKING_TIME,
+    NAME_MAX_LENGTH,
+    SHORT_LINK_LENGTH,
+    TAG_FIELDS_MAX_LENGTH,
+)
 
 User = get_user_model()
 
@@ -15,11 +21,14 @@ class TagModel(models.Model):
     """Модель для создания тегов."""
 
     name = models.CharField(
-        max_length=NAME_MAX_LENGTH,
+        max_length=TAG_FIELDS_MAX_LENGTH,
         verbose_name='Тег',
         unique=True,
     )
-    slug = models.SlugField(max_length=16, unique=True)
+    slug = models.SlugField(
+        max_length=TAG_FIELDS_MAX_LENGTH,
+        unique=True,
+    )
 
     class Meta:
         verbose_name = 'Тег'
@@ -39,7 +48,7 @@ class IngredientModel(models.Model):
     )
 
     measurement_unit = models.CharField(
-        max_length=16,
+        max_length=MEASUREMENT_UNIT_MAX_LENGTH,
         verbose_name='Ед. измерения',
     )
 
@@ -93,7 +102,7 @@ class RecipeModel(models.Model):
         verbose_name='Время приготовления, мин.',
         validators=[
             MinValueValidator(
-                limit_value=1,
+                limit_value=MIN_COOKING_TIME,
                 message='Нужно назначить время приготовления.',
             ),
         ],
@@ -105,7 +114,7 @@ class RecipeModel(models.Model):
     )
 
     short_link = models.CharField(
-        max_length=10,
+        max_length=SHORT_LINK_LENGTH,
         unique=True,
         blank=True,
         null=True,
@@ -148,7 +157,7 @@ class RecipeIngredientsModel(models.Model):
         verbose_name='Количество',
         validators=[
             MinValueValidator(
-                limit_value=1,
+                limit_value=INGREDIENT_MIN_LIMIT,
                 message='Нужно назначить количество ингредиентов.',
             ),
         ],

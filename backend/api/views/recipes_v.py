@@ -27,9 +27,6 @@ from recipes.models import (
     TagModel,
 )
 
-ERROR_TEXT_400 = 'Рецепт не существует.'
-ERROR_TEXT_404 = 'Рецепт не найден.'
-
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     """Вьюсет для тегов."""

@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import F, Q
 
-MAX_LENGTH_150 = 150
+from foodgram_project.constants import USER_FIELDS_MAX_LENGTH_150
 
 
 class FoodgramUser(AbstractUser):
@@ -19,14 +19,14 @@ class FoodgramUser(AbstractUser):
     )
 
     username = models.CharField(
-        max_length=MAX_LENGTH_150,
+        max_length=USER_FIELDS_MAX_LENGTH_150,
         unique=True,
         validators=[validators.UnicodeUsernameValidator()],
     )
     email = models.EmailField(unique=True)
 
-    first_name = models.CharField(max_length=MAX_LENGTH_150)
-    last_name = models.CharField(max_length=MAX_LENGTH_150)
+    first_name = models.CharField(max_length=USER_FIELDS_MAX_LENGTH_150)
+    last_name = models.CharField(max_length=USER_FIELDS_MAX_LENGTH_150)
 
     class Meta:
         ordering = ('username',)
