@@ -11,6 +11,29 @@
 
 ### Деплой Foodgram
 
+Деплой на сервер происходит в несколько этапов.
+
+1. В отдельную дерикторию необходимо поместить docker-compose.production.yml и .env. С примером заполнения .env можно ознакомится в .env.example.
+
+2. Настроить внешний Nginx. 
+
+    ` sudo nano /etc/nginx/sites-enabled/default`
+
+    Добавить туда доменное имя и указать порты.
+
+3. В выбранной дериктории запускаеся файл docker-compose.production.yml:
+
+    `sudo docker compose -f docker-compose.production.yml up`
+
+4. Сбор статистики и проведение миграций происходят автоматически на этапе сборки контейнера backend.
+
+5. После запуска приложения, можно воспользоваться командами создания первоначальных объектов внутри контейнера backend.
+
+    `sudo docker compose -f docker-compose.production.yml exec backend python manage.py auto_create_superuser` создаст суперюзера c атрибутами указанными в .env
+
+    `sudo docker compose -f docker-compose.production.yml exec backend python manage.py create_basic_tags` создаст первые теги для рецептов (Завтрак, Обед, Ужин)
+
+    `sudo docker compose -f docker-compose.production.yml exec backend python manage.py load_ingredients` загружает обширную коллекцию ингредиентов в базу даных
 
 
 
@@ -75,4 +98,4 @@
 - gunicorn
 - Docker
 
-Автор: [Беляков Никита>](https://github.com/NikBel523)
+Автор: [Беляков Никита](https://github.com/NikBel523)
