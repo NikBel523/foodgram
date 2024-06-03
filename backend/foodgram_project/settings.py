@@ -12,7 +12,7 @@ DEBUG = os.getenv('DEBUG_STATUS', False) == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
-DOMAIN_NAME = ALLOWED_HOSTS[-1]
+DOMAIN_NAME = os.getenv('DOMAIN_NAME')
 
 
 # Application definition
