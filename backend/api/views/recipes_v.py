@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -18,7 +19,6 @@ from api.serializers import (
     TagSerializer,
 )
 from api.utils import generate_shopping_cart_txt
-from foodgram_project.settings import SHORT_URL_PREFIX
 from recipes.models import (
     FavoriteModel,
     RecipeIngredientsModel,
@@ -64,7 +64,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Вывод короткой ссылки на рецепт."""
         recipe = self.get_object()
         base_url = request.build_absolute_uri('/')[:-1]
-        short_url = f'{base_url}/{SHORT_URL_PREFIX}/{recipe.short_link}/'
+        short_url = (
+            f'{base_url}/'
+            f'{settings.SHORT_URL_PREFIX}/'
+            f'{recipe.short_link}/'
+        )
 
         return Response({'short-link': short_url}, status=status.HTTP_200_OK)
 
